@@ -7,15 +7,13 @@ Coda plugin to generate metrics from your programming activity.
 Installation
 ------------
 
-1. Download the plugin.
+1. Go to the [offical plugin page](https://panic.com/coda/plugins.php?id=139) then click `Install`
 
-2. Double click on `WakaTime.codaplugin`
+2. Enter your [api key](https://wakatime.com/settings#apikey), then click `OK`.
 
-3. Enter your [api key](https://wakatime.com/settings#apikey), then click `OK`.
+3. Use Coda like you normally do and your time will be tracked for you automatically.
 
-4. Use Coda like you normally do and your time will be tracked for you automatically.
-
-5. Visit https://wakatime.com to see your logged time.
+4. Visit https://wakatime.com to see your logged time.
 
 
 Screen Shots
