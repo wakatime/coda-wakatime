@@ -36,5 +36,7 @@
 	<string>WakaTime</string>
 	<key>NSPrincipalClass</key>
 	<string>WakaTime</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.7</string>
 </dict>
 </plist>
