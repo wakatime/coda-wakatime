@@ -129,10 +129,22 @@ static NSString *CODA_VERSION = nil;
         [arguments addObject:[NSString stringWithFormat:@"coda/%@ coda-wakatime/%@", CODA_VERSION, VERSION]];
         if (isWrite)
             [arguments addObject:@"--write"];
+        NSString *project = [self getProjectName ];
+        if (project != nil) {
+            [arguments addObject:@"--alternate-project"];
+            [arguments addObject:project];
+        }
         // NSLog(@"%@", [arguments componentsJoinedByString:@", "]);
         [task setArguments: arguments];
         [task launch];
     }
+}
+
+- (NSString *)getProjectName {
+    NSString *nickname = [controller siteNickname];
+    if (nickname != nil)
+        return nickname;
+    return nil;
 }
 
 - (NSString *)getApiKey {
