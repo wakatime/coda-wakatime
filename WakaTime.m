@@ -1,20 +1,17 @@
 #import "WakaTime.h"
 #import "CodaPlugInsController.h"
 
-static NSString *VERSION = nil;
-static NSString *CONFIG_FILE = @".wakatime.cfg";
-static NSString *CLI = @"wakatime-master/wakatime/cli.py";
-static NSString *CLI_ZIP = @"wakatime-master.zip";
-static int FREQUENCY = 2;  // minutes
-static NSString *CODA_VERSION = nil;
-
 @interface WakaTime ()
 
+@property (nonatomic, strong) NSString *version;
+@property (nonatomic, strong) NSString *configFile;
+@property (nonatomic, strong) NSString *cli;
+@property (nonatomic, strong) NSString *resourcesDir;
+@property (nonatomic, strong) NSString *cliZip;
+@property (nonatomic) int frequency;
+@property (nonatomic, strong) NSString *codaVersion;
 @property (nonatomic, strong) NSString *lastFile;
 @property (nonatomic) CFAbsoluteTime lastSent;
-@property (nonatomic, strong) NSString *resourcesDir;
-@property (nonatomic, strong) NSString *cli;
-@property (nonatomic, strong) NSString *cliZip;
 
 - (id)initWithController:(CodaPlugInsController*)inController;
 
@@ -43,21 +40,22 @@ static NSString *CODA_VERSION = nil;
         NSBundle *bundle = [NSBundle bundleForClass:self.class];
         
         // Set runtime constants
-        CONFIG_FILE = [NSHomeDirectory() stringByAppendingPathComponent:CONFIG_FILE];
-        VERSION = [[bundle infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-        CODA_VERSION = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        self.frequency = 2;  // minutes
+        self.configFile = [NSHomeDirectory() stringByAppendingPathComponent:@".wakatime.cfg"];
+        self.version = [[bundle infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        self.codaVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         self.resourcesDir = [[[bundle resourceURL] absoluteURL] path];
-        self.cli = [NSString stringWithFormat:@"%@/%@", self.resourcesDir, CLI];
-        self.cliZip = [NSString stringWithFormat:@"%@/%@", self.resourcesDir, CLI_ZIP];
+        self.cli = [NSString stringWithFormat:@"%@/%@", self.resourcesDir, @"wakatime-master/wakatime/cli.py"];
+        self.cliZip = [NSString stringWithFormat:@"%@/%@", self.resourcesDir, @"wakatime-master.zip"];
         
-        NSLog(@"Initializing WakaTime v%@ (http://wakatime.com)", VERSION);
+        NSLog(@"Initializing WakaTime v%@ (http://wakatime.com)", self.version);
 		
         // add menu item to Plugins menu
 		[controller registerActionWithTitle:@"WakaTime API Key" target:self selector:@selector(settingsMenu:)];
         
         // prompt for api_key if not already set
         NSString *api_key = [[self getApiKey] stringByReplacingOccurrencesOfString:@" " withString:@""];
-        if (api_key == NULL || [api_key length] == 0) {
+        if (api_key == nil || [api_key length] == 0) {
             [self promptForApiKey];
         }
         
@@ -74,18 +72,7 @@ static NSString *CODA_VERSION = nil;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem {
-	BOOL menuItemIsValid = NO;
-	
-	if ( [menuItem action] == @selector(settingsMenu:) )
-	{
-		CodaTextView* textView = [controller focusedTextView];
-		
-		if ( [textView path] != nil )
-		{
-			
-		}
-	}
-	
+	BOOL menuItemIsValid = YES;
 	return menuItemIsValid;
 }
 
@@ -95,7 +82,7 @@ static NSString *CODA_VERSION = nil;
         
         CFAbsoluteTime currentTime = CFAbsoluteTimeGetCurrent();
         
-        if (!self.lastFile || !self.lastSent || ![self.lastFile isEqualToString:currentFile] || self.lastSent + FREQUENCY * 60 < currentTime) {
+        if (!self.lastFile || !self.lastSent || ![self.lastFile isEqualToString:currentFile] || self.lastSent + self.frequency * 60 < currentTime) {
             self.lastFile = currentFile;
             self.lastSent = currentTime;
             [self sendHeartbeat:false];
@@ -126,7 +113,7 @@ static NSString *CODA_VERSION = nil;
         [arguments addObject:@"--file"];
         [arguments addObject:self.lastFile];
         [arguments addObject:@"--plugin"];
-        [arguments addObject:[NSString stringWithFormat:@"coda/%@ coda-wakatime/%@", CODA_VERSION, VERSION]];
+        [arguments addObject:[NSString stringWithFormat:@"coda/%@ coda-wakatime/%@", self.codaVersion, self.version]];
         if (isWrite)
             [arguments addObject:@"--write"];
         NSString *project = [self getProjectName ];
@@ -142,16 +129,15 @@ static NSString *CODA_VERSION = nil;
 
 - (NSString *)getProjectName {
     NSString *nickname = [controller siteNickname];
-    if (nickname != nil)
-        return nickname;
-    return nil;
+    return nickname;
 }
 
 - (NSString *)getApiKey {
     // Read api key from config file
-    NSString *contents = [NSString stringWithContentsOfFile:CONFIG_FILE encoding:NSUTF8StringEncoding error:nil];[NSString stringWithContentsOfFile:CONFIG_FILE encoding:NSUTF8StringEncoding error:nil];
+    NSString *contents = [NSString stringWithContentsOfFile:self.configFile encoding:NSUTF8StringEncoding error:nil];
     NSArray *lines = [contents componentsSeparatedByString:@"\n"];
     for (NSString *s in lines) {
+        
         NSArray *line = [s componentsSeparatedByString:@"="];
         if ([line count] == 2) {
             NSString *key = [[line objectAtIndex:0] stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -161,12 +147,12 @@ static NSString *CODA_VERSION = nil;
             }
         }
     }
-    return NULL;
+    return nil;
 }
 
 - (void)saveApiKey:(NSString *)api_key {
     // Write api key to config file
-    NSString *contents = [NSString stringWithContentsOfFile:CONFIG_FILE encoding:NSUTF8StringEncoding error:nil];[NSString stringWithContentsOfFile:CONFIG_FILE encoding:NSUTF8StringEncoding error:nil];
+    NSString *contents = [NSString stringWithContentsOfFile:self.configFile encoding:NSUTF8StringEncoding error:nil];
     NSArray *lines = [contents componentsSeparatedByString:@"\n"];
     NSMutableArray *new_contents = [NSMutableArray array];
     BOOL found = false;
@@ -188,7 +174,7 @@ static NSString *CODA_VERSION = nil;
     }
     NSError *error = nil;
     NSString *to_write = [new_contents componentsJoinedByString:@"\n"];
-    [to_write writeToFile:CONFIG_FILE atomically:YES encoding:NSASCIIStringEncoding error:&error];
+    [to_write writeToFile:self.configFile atomically:YES encoding:NSASCIIStringEncoding error:&error];
     if (error) {
         NSLog(@"Fail: %@", [error localizedDescription]);
     }
@@ -199,7 +185,7 @@ static NSString *CODA_VERSION = nil;
     NSString *api_key = [self getApiKey];
     NSAlert *alert = [NSAlert alertWithMessageText:@"Enter your api key from wakatime.com" defaultButton:nil alternateButton:nil otherButton:nil informativeTextWithFormat:@""];
     NSTextField *input = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 300, 24)];
-    if (api_key != NULL) {
+    if (api_key != nil) {
         [input setStringValue:api_key];
     }
     [alert setAccessoryView:input];
