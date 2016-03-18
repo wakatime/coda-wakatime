@@ -76,7 +76,7 @@ static NSString *CODA_VERSION = nil;
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem {
 	BOOL menuItemIsValid = NO;
 	
-	if ( [menuItem action] == @selector(writeUTFBOM:) )
+	if ( [menuItem action] == @selector(settingsMenu:) )
 	{
 		CodaTextView* textView = [controller focusedTextView];
 		
