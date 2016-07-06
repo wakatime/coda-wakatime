@@ -3,6 +3,17 @@ History
 -------
 
 
+1.0.3 (2016-07-06)
+++++++++++++++++++
+
+- Upgrade wakatime-cli to v6.0.7.
+- Handle unknown exceptions from requests library by deleting cached session
+  object because it could be from a previous conflicting version.
+- New hostname setting in config file to set machine hostname. Hostname
+  argument takes priority over hostname from config file.
+- Prevent logging unrelated exception when logging tracebacks.
+
+
 1.0.2 (2016-07-01)
 ++++++++++++++++++
 
