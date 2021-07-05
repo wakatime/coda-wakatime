@@ -1,6 +1,8 @@
 coda-wakatime
 =============
 
+[![wakatime](https://wakatime.com/badge/github/wakatime/coda-wakatime.svg)](https://wakatime.com)
+
 Coda plugin to generate metrics from your programming activity.
 
 
