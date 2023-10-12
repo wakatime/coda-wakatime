@@ -1,13 +1,10 @@
-coda-wakatime
-=============
+# coda-wakatime
 
 [![wakatime](https://wakatime.com/badge/github/wakatime/coda-wakatime.svg)](https://wakatime.com)
 
 Coda plugin to generate metrics from your programming activity.
 
-
-Installation
-------------
+## Installation
 
 1. Go to the [offical plugin page](https://panic.com/coda/plugins.php?id=139) then click `Install`
 
@@ -17,15 +14,11 @@ Installation
 
 4. Visit https://wakatime.com to see your logged time.
 
-
-Screen Shots
-------------
+## Screen Shots
 
 ![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
 
-
-Troubleshooting
----------------
+## Troubleshooting
 
 First, try running this Terminal command:
 
@@ -35,6 +28,6 @@ rm -rf "~/Library/Application Support/Coda 2/Plug-ins/WakaTime.codaplugin/Conten
 
 Then restart Coda.
 
-If that doesn't work, turn on debug mode and check your Coda log file (`/var/log/system.log`) and your wakatime cli log file (`~/.wakatime.log`).
+If that doesn't work, turn on debug mode and check your Coda log file (`/var/log/system.log`) and your wakatime cli log file (`~/.wakatime/wakatime.log`).
 
 For more general troubleshooting information, see [wakatime/wakatime#troubleshooting](https://github.com/wakatime/wakatime#troubleshooting).
